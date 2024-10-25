@@ -9,13 +9,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    phone: {
+    password: {
         type: String,
         required: true,
     },
-    image: {
+    phone: {
         type: String,
-        required: true,
+        
+    },
+    image: {
+        type: String
+        
     },
     role: {
         type: String,
@@ -33,6 +37,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: Date.now,
     },
+    isAccessGranted:{
+        type: Boolean,
+        default: false,
+    },
+    resetPasswordToken: String,  // Token for password reset
+    resetPasswordExpires: Date,
+
+    
 });
 
 module.exports = mongoose.model('User', userSchema);

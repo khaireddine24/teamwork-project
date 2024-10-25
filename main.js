@@ -14,6 +14,15 @@ mongoose.connect(process.env.DB_URI);
 const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", ()=>console.log("connected to the data base"));
+// Middleware to check if the user is an admin
+const adminAuth = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+};
+
 
 //middlewares
 /*
@@ -26,7 +35,7 @@ to req.body.
 -Flash Message Handling: The custom middleware ensures that session messages (stored temporarily)
  are moved to res.locals for display in views and then removed from the session to prevent duplicate display.
 */ 
-app.use(express.urlencoded({extended : false}));
+app.use(express.urlencoded({extended : true}));
 app.use(express.json());
 app.use(
     session({
@@ -40,6 +49,7 @@ app.use((req, res, next)=>{
     delete req.session.message;
     next();
 });
+
 
 //set template engine
 app.set('view engine','ejs');
