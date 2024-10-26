@@ -7,13 +7,13 @@ const session = require('express-session');
 const app= express();
 const PORT = process.env.PORT || 4000;
 
-//how to connect to data base 
+//how to connect to database 
 
 mongoose.connect(process.env.DB_URI);
 
 const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
-db.once("open", ()=>console.log("connected to the data base"));
+db.once("open", ()=>console.log("connected to the database"));
 // Middleware to check if the user is an admin
 const adminAuth = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {

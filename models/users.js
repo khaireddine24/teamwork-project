@@ -18,8 +18,8 @@ const userSchema = new mongoose.Schema({
         
     },
     image: {
-        type: String
-        
+        type: String,
+        required:false,  
     },
     role: {
         type: String,
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    resetPasswordToken: String,  // Token for password reset
+    resetPasswordToken: String,
     resetPasswordExpires: Date,
 
     

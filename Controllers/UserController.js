@@ -58,7 +58,7 @@ exports.addUser = async (req, res) => {
             email: req.body.email,
             phone: req.body.phone,
             role: req.body.role || 'user',
-            image: req.file.filename,
+            image: null,
             password: hashedPassword,
             verificationCode: verificationCode,
             verified: false
@@ -77,6 +77,167 @@ exports.addUser = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({ role: { $ne: 'admin' } })
+            .select('-password -resetPasswordToken -resetPasswordExpires -verificationCode')
+            .sort({ createdAt: -1 });
+        
+        res.status(200).json({
+            message: "Users retrieved successfully",
+            count: users.length,
+            users: users
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error retrieving users",
+            error: error.message
+        });
+    }
+};
+
+exports.getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+            .select('-password -resetPasswordToken -resetPasswordExpires -verificationCode');
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        res.status(200).json({
+            message: "User retrieved successfully",
+            user: user
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error retrieving user",
+            error: error.message
+        });
+    }
+};
+
+exports.editUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: "Cannot edit admin user" });
+        }
+
+        // Handle file upload if there's a new image
+        if (req.file) {
+            // Delete old image if it exists
+            if (user.image) {
+                try {
+                    await fs.unlink(path.join('./uploads', user.image));
+                } catch (err) {
+                    console.error('Error deleting old image:', err);
+                }
+            }
+            user.image = req.file.filename;
+        }
+
+        // Update fields if they exist in request body
+        const updateFields = ['name', 'email', 'phone'];
+        updateFields.forEach(field => {
+            if (req.body[field]) {
+                user[field] = req.body[field];
+            }
+        });
+
+        // Handle password update if provided
+        if (req.body.password) {
+            user.password = await bcrypt.hash(req.body.password, 8);
+        }
+
+        await user.save();
+
+        // Send email notification
+        await transporter.sendMail({
+            from: 'kthirithamer1@gmail.com',
+            to: user.email,
+            subject: 'Profile Updated',
+            text: `Hello ${user.name}, your profile has been updated successfully.`
+        });
+
+        res.status(200).json({
+            message: "User updated successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role,
+                image: user.image
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating user",
+            error: error.message
+        });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: "Cannot delete admin user" });
+        }
+
+        // Delete user's image if it exists
+        if (user.image) {
+            try {
+                await fs.unlink(path.join('./uploads', user.image));
+            } catch (err) {
+                console.error('Error deleting user image:', err);
+            }
+        }
+
+        // Send deletion notification email
+        await transporter.sendMail({
+            from: 'kthirithamer1@gmail.com',
+            to: user.email,
+            subject: 'Account Deleted',
+            text: `Hello ${user.name}, your account has been deleted successfully.`
+        });
+
+        await User.findByIdAndDelete(userId);
+
+        res.status(200).json({
+            message: "User deleted successfully",
+            deletedUser: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error deleting user",
+            error: error.message
+        });
+    }
+};
+
 exports.renderVerifyEmail = (req, res) => {
     res.render("verify_email", { title: "Verify Email" });
 };
