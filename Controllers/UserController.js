@@ -58,9 +58,8 @@ exports.addUser = async (req, res) => {
             email: req.body.email,
             phone: req.body.phone,
             role: req.body.role || 'user',
-            image: null,
+            image: req.file.filename,
             password: hashedPassword,
-            verificationCode: verificationCode,
             verified: false
         });
 
@@ -96,6 +95,8 @@ exports.getAllUsers = async (req, res) => {
         });
     }
 };
+
+
 
 exports.getUserById = async (req, res) => {
     try {
@@ -238,9 +239,6 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-exports.renderVerifyEmail = (req, res) => {
-    res.render("verify_email", { title: "Verify Email" });
-};
 
 // Verify email with verification code
 exports.verifyEmail = async (req, res) => {
@@ -353,7 +351,4 @@ exports.denyAccess = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-exports.renderAddUser = (req, res) => {
-    res.status(200).json({ message: 'Add User page', title: "Add User" });
 };

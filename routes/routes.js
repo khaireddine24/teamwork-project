@@ -25,17 +25,15 @@ const adminAuth = (req, res, next) => {
 };
 
 // Routes
-router.get("/add", userController.renderAddUser); // Show add user form
 router.post("/add", upload, userController.addUser); // Handle new user creation
 router.get("/users", userController.getAllUsers);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", upload, userController.editUser);
 router.delete("/users/:id", userController.deleteUser);
-router.get("/verify-email", userController.renderVerifyEmail); // Show email verification form
 router.post("/verify-email", userController.verifyEmail); // Verify the email
+
 router.post("/accept-access/:id", adminAuth, userController.acceptAccess); // Admin-only route
 router.post("/deny-access/:id", adminAuth, userController.denyAccess); // Admin-only route
-router.get("/user/login", userController.LoginUser);
 router.post("/user/login", userController.LoginUser);
 
 
