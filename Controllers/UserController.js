@@ -77,6 +77,7 @@ exports.addUser = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find({ role: { $ne: 'admin' } })
@@ -95,6 +96,8 @@ exports.getAllUsers = async (req, res) => {
         });
     }
 };
+=======
+>>>>>>> 7d56bc9 (Initial commit)
 
 
 
@@ -311,11 +314,198 @@ exports.requestPasswordReset = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({ role: { $ne: 'admin' } })
+            .select('-password -resetPasswordToken -resetPasswordExpires -verificationCode')
+            .sort({ createdAt: -1 });
+        
+        res.status(200).json({
+            message: "Users retrieved successfully",
+            count: users.length,
+            users: users
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error retrieving users",
+            error: error.message
+        });
+    }
+};
+
+
+
+exports.getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+            .select('-password -resetPasswordToken -resetPasswordExpires -verificationCode');
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: "Access denied" });
+        }
+
+        res.status(200).json({
+            message: "User retrieved successfully",
+            user: user
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error retrieving user",
+            error: error.message
+        });
+    }
+};
+
+exports.editUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: "Cannot edit admin user" });
+        }
+
+        // Handle file upload if there's a new image
+        if (req.file) {
+            // Delete old image if it exists
+            if (user.image) {
+                try {
+                    await fs.unlink(path.join('./uploads', user.image));
+                } catch (err) {
+                    console.error('Error deleting old image:', err);
+                }
+            }
+            user.image = req.file.filename;
+        }
+
+        // Update fields if they exist in request body
+        const updateFields = ['name', 'email', 'phone'];
+        updateFields.forEach(field => {
+            if (req.body[field]) {
+                user[field] = req.body[field];
+            }
+        });
+
+        // Handle password update if provided
+        if (req.body.password) {
+            user.password = await bcrypt.hash(req.body.password, 8);
+        }
+
+        await user.save();
+
+        // Send email notification
+        await transporter.sendMail({
+            from: 'kthirithamer1@gmail.com',
+            to: user.email,
+            subject: 'Profile Updated',
+            text: `Hello ${user.name}, your profile has been updated successfully.`
+        });
+
+        res.status(200).json({
+            message: "User updated successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role,
+                image: user.image
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating user",
+            error: error.message
+        });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (user.role === 'admin') {
+            return res.status(403).json({ message: "Cannot delete admin user" });
+        }
+
+        // Delete user's image if it exists
+        if (user.image) {
+            try {
+                await fs.unlink(path.join('./uploads', user.image));
+            } catch (err) {
+                console.error('Error deleting user image:', err);
+            }
+        }
+
+        // Send deletion notification email
+        await transporter.sendMail({
+            from: 'kthirithamer1@gmail.com',
+            to: user.email,
+            subject: 'Account Deleted',
+            text: `Hello ${user.name}, your account has been deleted successfully.`
+        });
+
+        await User.findByIdAndDelete(userId);
+
+        res.status(200).json({
+            message: "User deleted successfully",
+            deletedUser: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error deleting user",
+            error: error.message
+        });
+    }
+};
+exports.resetPassword = async (req, res) => {
+    const { token } = req.params; // Get the token from the URL
+    const { newPassword } = req.body;
+
+    try {
+        // Find the user with the reset token and check if it's expired
+        const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+        if (!user) return res.status(400).json({ message: 'Password reset token is invalid or has expired.' });
+
+        // Hash the new password
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.resetPasswordToken = undefined; // Clear the reset token
+        user.resetPasswordExpires = undefined; // Clear the expiration
+
+        await user.save();
+        res.status(200).json({ message: 'Password has been reset successfully.' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
 
 // Admin grants or denies user access
 exports.acceptAccess = async (req, res) => {
     const userId = req.params.id;
     try {
+        if(!userId){
+            return res.status(404).json({ message: 'absence of userID' })
+
+        }
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -333,22 +523,41 @@ exports.acceptAccess = async (req, res) => {
     }
 };
 
+
+
+
+
 exports.denyAccess = async (req, res) => {
     const userId = req.params.id;
+
     try {
-        const user = await User.findById(userId);
+        // Use findOne directly with userId
+        const user = await User.findOne({ _id: userId });
+
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         user.isAccessGranted = false;
         await user.save();
+
+        // Send the email notification
         await transporter.sendMail({
             from: 'kthirithamer1@gmail.com',
             to: user.email,
             subject: 'Access Denied',
             text: `Hello ${user.name}, your access request has been denied.`
         });
+
         res.status(200).json({ message: 'Access denied and email sent.' });
     } catch (error) {
+        console.error('Error in denyAccess:', error.message);
         res.status(500).json({ message: error.message });
     }
 };
+<<<<<<< HEAD
+=======
+
+
+
+
+
+>>>>>>> 7d56bc9 (Initial commit)
