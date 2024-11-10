@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
 import fs from 'fs';
 import path from 'path';
+import { templates } from '../template/index.js';
 
 // Multer setup for image upload
 const storage = multer.diskStorage({
@@ -17,6 +18,30 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
     }
 });
+const sendAdminNotification = async (subject, message) => {
+    try {
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.mailtrap.io',
+            port: 2525,
+            auth: {
+                user: '98d772f0f26841',
+                pass: '56a1b9eaddd4fb'
+            }
+        });
+
+        const mailOptions = {
+            from: 'thamerkthir@gmail.com',
+            to: 'admin@email.com',    
+            subject: subject,
+            text: message
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`Notification sent to admin: ${subject}`);
+    } catch (error) {
+        console.error('Error sending admin notification:', error);
+    }
+};
 
 
 
@@ -69,8 +94,8 @@ export const addUser = async (req, res) => {
         const mailOptions = {
             from: 'ihrissanek@gmail.com',
             to: req.body.email,
-            subject: 'Email Verification',
-            text: `Your verification code is: ${verificationCode}`
+            subject: templates.emails.verificationCode(verificationCode).subject,
+            text: templates.emails.verificationCode(verificationCode).text
         };
 
         await Promise.all([user.save(), transporter.sendMail(mailOptions)]);
@@ -247,8 +272,8 @@ export const editUser = async (req, res) => {
         await transporter.sendMail({
             from: 'ihrissanek@gmail.com',
             to: user.email,
-            subject: 'Profile Updated',
-            text: `Hello ${user.name}, your profile has been updated successfully.`
+            subject: templates.emails.ProfileUpdated(user).subject,
+            text:  templates.emails.ProfileUpdated(user).text
         });
 
         res.status(200).json({
@@ -330,6 +355,7 @@ export const verifyEmail = async (req, res) => {
         user.verified = true;
         user.verificationCode = null;
         await user.save();
+        sendAdminNotification(templates.notifications.adminNotification(user).subject,templates.notifications.adminNotification(user).text);
         res.status(200).json({ message: 'Email verified successfully!' });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -430,8 +456,8 @@ export const acceptAccess = async (req, res) => {
         await transporter.sendMail({
             from: 'ihrissanek@gmail.com',
             to: user.email,
-            subject: 'Access Granted',
-            text: `Hello ${user.name}, your access has been granted.\nthis link to access ${accessLink}`
+            subject:templates.emails.welcomeEmail(user,accessLink).subject,
+            text:templates.emails.welcomeEmail(user,accessLink).text
         });
         res.status(200).json({ message: 'Access granted and email sent.' });
     } catch (error) {

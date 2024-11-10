@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import jwt from 'jsonwebtoken';
 import * as userController from '../Controllers/UserController.js';
+import * as ArticleController from '../Controllers/ArticleController.js';
 
 const router = express.Router();
 
@@ -37,20 +38,31 @@ const adminAuth = async (req, res, next) => {
 };
 
 // Routes
-router.post("/add", upload, userController.addUser);
+
+// user
+
 router.get("/users", userController.getAllUsers);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", upload, userController.editUser);
 router.delete("/users/:id", userController.deleteUser);
-router.post("/verify-email", userController.verifyEmail);
 
+//Auth
+router.post("/verify-email", userController.verifyEmail);
 router.post("/accept-access/:id", adminAuth, userController.acceptAccess);
 router.post("/deny-access/:id", adminAuth, userController.denyAccess);
+router.post("/add", upload, userController.addUser);
 router.post("/user/login", userController.Login);
 router.post('/user/logout',userController.logout);
 router.get("/check-auth", userController.checkAuth);
-
 router.post("/reset-password", userController.requestPasswordReset);
 router.post('/reset-password/:token', userController.resetPassword);
+
+//Article
+router.post("/articles/add", ArticleController.AddArticle);
+router.put("/articles/:id",  ArticleController.editArticle);
+router.get("/articles/:id", ArticleController.getArticleById);
+router.get("/articles", ArticleController.getAllArticles);
+router.delete("/articles/:id", ArticleController.DeleteArticleById);
+
 
 export default router;
