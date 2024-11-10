@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Lock, Loader } from "lucide-react";
+import { Mail, Lock, Loader, Eye,EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import { useAuthStore } from "../store/authStore";
 
+
 const LoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
 
 	const { login, isLoading, error } = useAuthStore();
 	const navigate = useNavigate();
@@ -43,14 +45,23 @@ const LoginPage = () => {
 						onChange={(e) => setEmail(e.target.value)}
 					/>
 
-					<Input
-						icon={Lock}
-						type="password"
-						placeholder="Password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-
+                   <div className="relative">
+						<Input
+							icon={Lock}
+							type={showPassword ? "text" : "password"} 
+							placeholder="Password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					
+						<button
+							type="button"
+							className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+							onClick={() => setShowPassword((prev) => !prev)}
+						>
+							{showPassword ? <EyeOff /> : <Eye />}
+						</button>
+					</div>
 					<div className="flex items-center mb-6">
 						<Link to="/forgot-password" className="text-sm text-blue-400 hover:underline">
 							Forgot password?
