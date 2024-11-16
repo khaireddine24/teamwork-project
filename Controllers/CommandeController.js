@@ -1,7 +1,7 @@
 
 import nodemailer from 'nodemailer';
 import { templates } from '../template/index.js';
-import { Commande } from '../models/commande.js';
+import { Commande } from '../models/Commande.js';
 
 
 const sendAdminNotification = async (subject, message) => {
@@ -30,12 +30,18 @@ const sendAdminNotification = async (subject, message) => {
 
 // add a commande
 export const AddCommande = async (req, res) => {
-    const { dateCommande, status, dateLivraison} = req.body;
+    const { dateCommande, status, dateLivraison,ItemLines,Suppliers} = req.body;
     try {
         const commande = new Commande({
             dateCommande: dateCommande,
             status:status,
             dateLivraison : dateLivraison,
+            ItemLines:ItemLines,
+            Suppliers:Suppliers
+           
+
+            
+
         });
 
         await commande.save();

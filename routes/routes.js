@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import * as userController from '../Controllers/UserController.js';
 import * as ArticleController from '../Controllers/ArticleController.js';
 import * as CommandeController from '../Controllers/CommandeController.js'
+import * as SupplierController from '../Controllers/SupplierController.js'
+import * as ItemLineController from '../Controllers/ItemLineController.js';
 
 const router = express.Router();
 
@@ -71,4 +73,21 @@ router.put("/commande/:id",  CommandeController.editCommande);
 router.get("/commande/:id", CommandeController.getCommandeById);
 router.get("/commande", CommandeController.getAllCommande);
 router.delete("/commande/:id", CommandeController.DeleteCommandeById);
+
+// Supplier
+router.post("/supplier/add", SupplierController.createSupplier);
+router.get("/supplier", SupplierController.getAllSuppliers);
+router.get("/supplier/:id", SupplierController.getSupplierById);
+router.put("/supplier/:id", SupplierController.updateSupplier);
+router.delete("/supplier/:id", SupplierController.deleteSupplier);
+
+//Item Line
+router.post("/itemlines/add", ItemLineController.createItemLine);
+router.get("/itemlines", ItemLineController.getAllItemLines);
+router.get("/itemlines/:id", ItemLineController.getItemLineById);
+router.put("/itemlines/:id", ItemLineController.updateItemLine);
+router.delete("/itemlines/:id", ItemLineController.deleteItemLine);
+
+
+
 export default router;
