@@ -9,7 +9,10 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+
 import { Toaster } from "react-hot-toast";
+import ProfilePage from "./pages/ProfilePage";
+
 
 
 function App() {
@@ -58,6 +61,24 @@ function App() {
 							<ResetPasswordPage />
 					}
 				/>
+				<Route
+				    path="/profile"
+					element={
+						<ProtectedRoute>
+							<ProfilePage/> {/* Protect the ProfilePage */}
+						</ProtectedRoute>
+					}
+				 ></Route>
+				 <Route
+    path="/admin-dashboard"
+    element={
+      <ProtectedRoute>
+        <AdminDashboardPage />
+      </ProtectedRoute>
+    }
+  />
+				
+			
 				{/* catch all routes */}
 				<Route path='*' element={<Navigate to='/' replace />} />
 			</Routes>
