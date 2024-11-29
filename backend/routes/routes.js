@@ -40,11 +40,13 @@ const adminAuth = async (req, res, next) => {
 // Routes
 
 // user
-
+router.get("/users/non-admins", adminAuth, userController.getNonAdminUsers);
+router.get("/pending-employees", adminAuth, userController.getPendingEmployees);
 router.get("/users", userController.getAllUsers);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", upload, userController.editUser);
 router.delete("/users/:id", userController.deleteUser);
+
 
 //Auth
 router.post("/verify-email", userController.verifyEmail);

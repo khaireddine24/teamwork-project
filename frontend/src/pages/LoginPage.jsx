@@ -13,19 +13,21 @@ const LoginPage = () => {
   const { login, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const user = await login(email, password); // Assume login returns the user object
-      if (user.role === "admin") {
-        navigate("/admin-dashboard"); // Redirect to the admin dashboard
-      } else {
-        navigate("/dashboard"); // Redirect to the user dashboard
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		try {
+			const response =await login(email, password);
+      if(response?.user?.role==="admin"){
+        navigate("/admin-dashboard");
       }
-    } catch (err) {
-      console.error("Login error:", err);
-    }
-  };
+      else{
+        navigate ("/user-dashboard");
+      }
+			
+		} catch (err) {
+			console.error("Login error:", err);
+		}
+	};
 
   return (
     <motion.div

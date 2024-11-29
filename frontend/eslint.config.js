@@ -3,8 +3,10 @@ import globals from 'globals'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import prettier from 'eslint-config-prettier'
 
 export default [
+  {ignores: ['node_modules','dist'],},
   {
     files: ['**/*.{js,jsx}'],
     ignores: ['dist'],
@@ -17,7 +19,7 @@ export default [
         sourceType: 'module',
       },
     },
-    settings: { react: { version: '18.3' } },
+    settings: { react: { version: 'detect' } },
     plugins: {
       react,
       'react-hooks': reactHooks,
@@ -36,4 +38,5 @@ export default [
       ],
     },
   },
+  prettier
 ]

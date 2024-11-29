@@ -10,6 +10,7 @@ export const useAuthStore = create((set) => ({
   isLoading: false,
   isCheckingAuth: true,
   message: null,
+  token:null,
 
   signup: async (name, email, password, phone, image, role = "user") => {
     set({ isLoading: true, error: null });
@@ -22,7 +23,7 @@ export const useAuthStore = create((set) => ({
       formData.append("image", image);
       formData.append("role", role);
 
-      const response = await axios.post(`${API_URL}/add`, formData, {
+      const response = await axios.post(`${API_URL}api/add`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       set({ user: response.data.user, isAuthenticated: true, isLoading: false });
@@ -35,15 +36,17 @@ export const useAuthStore = create((set) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/user/login`, { email, password });
+      const response = await axios.post(`${API_URL}api/user/login`, { email, password });
       set({
         isAuthenticated: true,
         user: response.data.user,
         error: null,
         isLoading: false,
+        isCheckingAuth:false,
       });
+      return response.data;
     } catch (error) {
-      set({ error: error.response?.data?.message || "Error logging in", isLoading: false });
+      set({ error: error.response?.data?.message || "Error logging in", isLoading: false, isCheckingAuth:false });
       throw error;
     }
   },
@@ -51,7 +54,7 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     set({ isLoading: true, error: null });
     try {
-      await axios.post(`${API_URL}/user/logout`);
+      await axios.post(`${API_URL}api/user/logout`);
       set({ user: null, isAuthenticated: false, error: null, isLoading: false });
     } catch (error) {
       set({ error: "Error logging out", isLoading: false });
@@ -62,7 +65,7 @@ export const useAuthStore = create((set) => ({
   verifyEmail: async (code) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/verify-email`, { code });
+      const response = await axios.post(`${API_URL}api/verify-email`, { code });
       set({ user: response.data.user, isAuthenticated: true, isLoading: false });
       return response.data;
     } catch (error) {
@@ -74,18 +77,18 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
-      const response = await axios.get(`${API_URL}/check-auth`);
-      console.log(response);
+      const response = await axios.get(`${API_URL}api/check-auth`);
+      console.log(response,"response");
       set({ user: response.data.user, isAuthenticated: true, isCheckingAuth: false });
     } catch (error) {
-      set({ error: null, isCheckingAuth: false, isAuthenticated: false });
+      set({ user: null, isCheckingAuth: false, isAuthenticated: false ,});
     }
   },
 
   forgotPassword: async (email) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/reset-password`, { email });
+      const response = await axios.post(`${API_URL}/api/reset-password`, { email });
       set({ message: response.data.message, isLoading: false });
     } catch (error) {
       set({
@@ -99,7 +102,7 @@ export const useAuthStore = create((set) => ({
   resetPassword: async (token, newPassword) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/reset-password/${token}`, { newPassword });
+      const response = await axios.post(`${API_URL}api/reset-password/${token}`, { newPassword });
       set({ message: response.data.message, isLoading: false });
     } catch (error) {
       set({
@@ -113,7 +116,7 @@ export const useAuthStore = create((set) => ({
   acceptAccess: async (userId, token) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/accept-access/${userId}`, {}, {
+      const response = await axios.post(`${API_URL}api/accept-access/${userId}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       set({ message: response.data.message, isLoading: false });
@@ -129,7 +132,7 @@ export const useAuthStore = create((set) => ({
   denyAccess: async (userId, token) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/deny-access/${userId}`, {}, {
+      const response = await axios.post(`${API_URL}api/deny-access/${userId}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       set({ message: response.data.message, isLoading: false });

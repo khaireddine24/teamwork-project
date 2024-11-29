@@ -24,13 +24,13 @@ const sendAdminNotification = async (subject, message) => {
             host: 'smtp.mailtrap.io',
             port: 2525,
             auth: {
-                user: '98d772f0f26841',
-                pass: '56a1b9eaddd4fb'
+                user: 'e26a4ba71399fd',
+                pass: 'ecb2dbb6410b16'
             }
         });
 
         const mailOptions = {
-            from: 'thamerkthir@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             to: 'admin@email.com',    
             subject: subject,
             text: message
@@ -50,8 +50,8 @@ const transporter = nodemailer.createTransport({
     host: 'smtp.mailtrap.io',
     port: 2525,
     auth: {
-        user: '31cb6d900a353e',
-        pass: '4ef74662ceadd1'
+        user: 'e26a4ba71399fd',
+        pass: 'ecb2dbb6410b16'
     }
 });
 
@@ -92,7 +92,7 @@ export const addUser = async (req, res) => {
         });
 
         const mailOptions = {
-            from: 'ihrissanek@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             to: req.body.email,
             subject: templates.emails.verificationCode(verificationCode).subject,
             text: templates.emails.verificationCode(verificationCode).text
@@ -125,9 +125,9 @@ export const Login = async (req, res) => {
                 user: {
                     _id: 'admin',
                     email,
-                    role: 'admin'
+                    role: 'admin',
+                    token: adminToken
                 },
-                token: adminToken
             });
         }
 
@@ -270,7 +270,7 @@ export const editUser = async (req, res) => {
         await user.save();
 
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             to: user.email,
             subject: templates.emails.ProfileUpdated(user).subject,
             text:  templates.emails.ProfileUpdated(user).text
@@ -318,7 +318,7 @@ export const deleteUser = async (req, res) => {
         }
 
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             to: user.email,
             subject: 'Account Deleted',
             text: `Hello ${user.name}, your account has been deleted successfully.`
@@ -403,7 +403,7 @@ export const requestPasswordReset = async (req, res) => {
         const resetLink = `http://localhost:5173/reset-password/${token}`;
         const mailOptions = {
             to: user.email,
-            from: 'ihrissanek@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             subject: 'Password Reset Request',
             text: `Click on the following link to reset your password:\n\n${resetLink}\n\nIf you did not request this, please ignore this email.\n`
         };
@@ -454,7 +454,7 @@ export const acceptAccess = async (req, res) => {
         user.isAccessGranted = true;
         await user.save();
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             to: user.email,
             subject:templates.emails.welcomeEmail(user,accessLink).subject,
             text:templates.emails.welcomeEmail(user,accessLink).text
@@ -464,6 +464,47 @@ export const acceptAccess = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+//PENDING EMPLOYEES
+export const getPendingEmployees = async(req, res) => {
+    try {
+        const pendingEmployees = await User.find({
+            isAccessGranted : false,
+            role: {$ne: 'admin'},
+        }).select("-password -resetPasswordToken -resetPasswordExpires -verificationCode");
+        
+        res.status(200).json({
+            success:true,
+            employees:pendingEmployees,
+        });
+    } catch (error){
+        res.status(500).json({
+            success:false,
+            message:"Error fetching pending employees",
+            error:error.message,
+        });
+    }
+}
+
+//NON ADMIN USERS
+export const getNonAdminUsers = async (req, res) => {
+    try {
+      const users = await User.find({
+        role: { $ne: "admin" },
+      }).select("-password -resetPasswordToken -resetPasswordExpires -verificationCode");
+  
+      res.status(200).json({
+        success: true,
+        users: users,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error fetching users",
+        error: error.message,
+      });
+    }
+  };
 
 
 export const denyAccess = async (req, res) => {
@@ -478,7 +519,7 @@ export const denyAccess = async (req, res) => {
 
         // Send the email notification
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: 'maalaoui.ahmed.am75@gmail.com',
             to: user.email,
             subject: 'Access Denied',
             text: `Hello ${user.name}, your access request has been denied.`
