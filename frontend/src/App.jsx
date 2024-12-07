@@ -21,16 +21,18 @@ import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 
 function App() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user,checkAuthStatus } = useAuthStore();
   const navigate = useNavigate();
-
-  console.log("App", user?.role);
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      const isTokenValid = localStorage.getItem("auth_token");
+      if (!isTokenValid) {
+        console.log("err1",isTokenValid);
+        navigate("/login");
+      }
     }
-  }, [user]);
+  }, [user, checkAuthStatus]);
 
   return (
     <div className="min-h-screen">

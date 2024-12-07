@@ -17,10 +17,15 @@ const LoginPage = () => {
 		e.preventDefault();
 		try {
 			const response =await login(email, password);
+      
       if(response?.user?.role==="admin"){
+        localStorage.setItem("auth_token", response.token);
+        localStorage.setItem("auth_store", response.user.role);
         navigate("/home");
       }
       else{
+        localStorage.setItem("auth_token", response.token);
+        localStorage.setItem("auth_store", response.user.name);
         navigate ("/homeu");
       }
 			

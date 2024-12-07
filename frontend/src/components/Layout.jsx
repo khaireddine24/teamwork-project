@@ -4,7 +4,9 @@ import { useAuthStore } from "../store/authStore";
 import { Link, useNavigate } from "react-router-dom";
 
 const Layout = ({ children }) => {
-  const { user, logout } = useAuthStore();
+  const { logout } = useAuthStore();
+  const user=localStorage.getItem("auth_store");
+  console.log(user.message,user);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -22,21 +24,21 @@ const Layout = ({ children }) => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <Sidebar userRole={user?.role} />
+      <Sidebar userRole={user} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-white shadow p-4 flex justify-between items-center">
           <h1 className="text-xl font-bold">
-            {user?.role === "admin" ? "Admin Dashboard" : "User Dashboard"}
+            {user === "admin" ? "Admin Dashboard" : "User Dashboard"}
           </h1>
           <div className="relative">
             <button
               onClick={toggleDropdown}
               className="flex items-center gap-2 bg-gray-100 p-2 rounded-full"
             >
-              {user?.role === "admin" ? (
+              {user === "admin" ? (
                 <img
                   src="/adminProfile.png"
                   alt="Profile Admin"
@@ -50,7 +52,7 @@ const Layout = ({ children }) => {
                 />
               )}
               <span className="text-sm font-medium">
-                {user?.name || "Admin"}
+                {user || "Admin"}
               </span>
             </button>
             {/* Dropdown Menu */}

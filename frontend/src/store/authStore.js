@@ -39,7 +39,7 @@ export const useAuthStore = create((set) => ({
       const response = await axios.post(`${API_URL}/login`, { email, password });
   
       localStorage.setItem('auth_token', response.data.token);
-      localStorage.setItem('user',response.data.user);
+      localStorage.setItem('user',response.user);
   
       set({
         isAuthenticated: true,
@@ -158,4 +158,17 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-}));
+  checkAuthStatus: () => {
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+          return true;
+        }
+        return false;
+      }
+}),
+{
+  name: "auth-storage",
+  getStorage: () => localStorage,
+}
+
+);
