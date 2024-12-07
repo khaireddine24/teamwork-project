@@ -27,7 +27,7 @@ const Sidebar = ({ userRole }) => {
             <Link to="/homeu" className="block p-2 hover:bg-gray-700 rounded">
               Home
             </Link>
-            <Link to="/orders" className="block p-2 hover:bg-gray-700 rounded">
+            <Link to="/orders/user" className="block p-2 hover:bg-gray-700 rounded">
               View Orders
             </Link>
             <Link to="/SettingsUser" className="block p-2 hover:bg-gray-700 rounded">

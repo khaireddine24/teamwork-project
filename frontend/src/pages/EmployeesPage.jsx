@@ -7,12 +7,14 @@ const EmployeesPage = () => {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [error, setError] = useState(null);
   const {user}=useAuthStore();
+  const token = localStorage.getItem("auth_token");
+
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         // Fetch all users who are not admins
-        const response = await axios.get("http://localhost:5000/api/users");
+        const response = await axios.get("http://localhost:5000/users");
         const allUsers = response.data.users;
 
         // Separate pending users and approved users
@@ -33,10 +35,10 @@ const EmployeesPage = () => {
   const handleApprove = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/accept-access/${id}`,
+        `http://localhost:5000/accept-access/${id}`,
         {},
         {
-          headers: { Authorization: `Bearer ${user?.token}` }, // Properly pass the token
+          headers: { Authorization: `Bearer ${token}` }, // Properly pass the token
         }
       );
       setPendingUsers((prev) => prev.filter((user) => user._id !== id));
@@ -50,10 +52,10 @@ const EmployeesPage = () => {
   const handleDeny = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/deny-access/${id}`,
+        `http://localhost:5000/deny-access/${id}`,
         {},
         {
-          headers: { Authorization: `Bearer ${user?.token}` }, // Properly pass the token
+          headers: { Authorization: `Bearer ${token}` }, // Properly pass the token
         }
       );
       setPendingUsers((prev) => prev.filter((user) => user._id !== id));

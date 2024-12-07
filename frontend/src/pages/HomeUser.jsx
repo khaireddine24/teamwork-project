@@ -7,40 +7,63 @@ const HomeUser = () => {
   const [pendingCommandes, setPendingCommandes] = useState([]);
   const [deniedCommandes, setDeniedCommandes] = useState([]);
   const [error, setError] = useState(null);
-  const [articles, setArticles] = useState([]); // Initialize as an array
-  const [showAddArticle, setShowAddArticle] = useState(false); // Toggle form visibility
+  const [articles, setArticles] = useState([]); 
+  const [showAddArticle, setShowAddArticle] = useState(false);
   const [newArticle, setNewArticle] = useState({
     name: "",
     description: "",
     price: "",
     quantity: "",
   });
-  
 
-  useEffect(async () => {
-    const token = localStorage.getItem('auth_token'); // Get token from local storage
-    if (!token) {
-      setError("Authentication token not found!");
-      return;
+  // Added missing handler functions
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewArticle((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveArticle = async () => {
+    try {
+      await addArticle(newArticle);
+      const updatedArticles = await getAllArticles();
+      setArticles(updatedArticles);
+      setShowAddArticle(false);
+      setNewArticle({ name: "", description: "", price: "", quantity: "" });
+    } catch (err) {
+      console.error("Error adding article:", err);
     }
-    const articlesRes = await getAllArticles();
+  };
 
+  useEffect(() => {
+    // Create an async function inside the effect
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          setError("Authentication token not found!");
+          return;
+        }
+
+        // Fetch articles
+        const articlesRes = await getAllArticles();
         setArticles(Array.isArray(articlesRes) ? articlesRes : []);
 
-
-    const fetchAndCategorizeCommandes = async () => {
-      try {
-        const commandes = await fetchCommandes(token); // Fetch commandes
+        // Fetch and categorize commandes
+        const commandes = await fetchCommandes(token);
         setSentCommandes(commandes.filter((commande) => commande.status === "Sent"));
         setPendingCommandes(commandes.filter((commande) => commande.status === "Pending"));
         setDeniedCommandes(commandes.filter((commande) => commande.status === "denied"));
       } catch (err) {
-        setError(err.message || "Failed to load commandes");
+        setError(err.message || "Failed to load data");
       }
     };
 
-    fetchAndCategorizeCommandes();
-  }, []);
+    // Call the async function
+    fetchData();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   if (error) {
     return <div className="text-red-500 text-center mt-4">{error}</div>;
