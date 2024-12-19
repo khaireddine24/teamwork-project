@@ -2,7 +2,7 @@
 import { User } from '../models/users.js';
 import multer from 'multer';
 import nodemailer from 'nodemailer';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
 import fs from 'fs';
