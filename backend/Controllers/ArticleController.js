@@ -2,7 +2,7 @@ import { Article } from '../models/Article.js';
 import nodemailer from 'nodemailer';
 import { templates } from '../template/index.js';
 
-const sendAdminNotification = async (subject, message) => {
+const sendAdminNotification = async (email,subject, message) => {
     try {
         const transporter = nodemailer.createTransport({
             host: "smtp-relay.brevo.com",
@@ -15,8 +15,8 @@ const sendAdminNotification = async (subject, message) => {
         });
 
         const mailOptions = {
-            from: 'ihrissanek@gmail.com',
-            to: 'admin@email.com',    
+            from: email || 'ihrissanek@gmail.com',
+            to: email || 'admin@email.com',    
             subject: subject,
             text: typeof message === 'string' ? message : JSON.stringify(message),
         };
@@ -74,7 +74,7 @@ export const AddArticle = async (req, res) => {
         });
 
         await article.save();
-        sendAdminNotification(templates.notifications.articleAddedNotification(article).subject, templates.notifications.articleAddedNotification(article).text);
+        sendAdminNotification(templates.notifications.articleAddedNotification(article).email,templates.notifications.articleAddedNotification(article).subject, templates.notifications.articleAddedNotification(article).text);
         res.status(200).json({ message: "Article added successfully" });
     } catch (error) {
         res.status(500).json({
@@ -96,6 +96,7 @@ export const DeleteArticleById = async (req, res) => {
 
         await Article.findByIdAndDelete(req.params.id);
         await sendAdminNotification(
+            templates.notifications.articleDeletedNotification(article).email,
             templates.notifications.articleDeletedNotification(article).subject,
             templates.notifications.articleDeletedNotification(article).text,
         );
@@ -129,6 +130,7 @@ export const editArticle = async (req, res) => {
 
         await article.save();
         await sendAdminNotification(
+            templates.notifications.articleDeletedNotification(article).email,
             templates.notifications.articleupdated(article).subject,
             templates.notifications.articleupdated(article).text,
         );

@@ -4,7 +4,7 @@ import { templates } from '../template/index.js';
 import { Commande } from '../models/Commande.js';
 
 
-const sendAdminNotification = async (subject, message) => {
+const sendAdminNotification = async (email,subject, message) => {
     try {
         const transporter = nodemailer.createTransport({
             host: "smtp-relay.brevo.com",
@@ -17,8 +17,8 @@ const sendAdminNotification = async (subject, message) => {
         });
 
         const mailOptions = {
-            from: 'ihrissanek@gmail.com',
-            to: 'admin@email.com',    
+            from: email || 'ihrissanek@gmail.com',
+            to: email || 'admin@email.com',    
             subject: subject,
             text: typeof message === 'string' ? message : JSON.stringify(message),
         };
@@ -39,15 +39,12 @@ export const AddCommande = async (req, res) => {
             dateLivraison : dateLivraison,
             ItemLines:ItemLines,
             Suppliers:Suppliers
-           
-
-            
 
         });
 
         await commande.save();
 
-        sendAdminNotification(templates.notifications.commandeAddedNotification(commande).subject, 
+        sendAdminNotification(templates.notifications.commandeAddedNotification(commande).email,templates.notifications.commandeAddedNotification(commande).subject, 
         templates.notifications.commandeAddedNotification(commande).text);
         res.status(200).json({ message: "commande added successfully" });
    
@@ -114,6 +111,7 @@ export const DeleteCommandeById = async (req, res) => {
         await Commande.findByIdAndDelete(req.params.id);
 
         await sendAdminNotification(
+            templates.notifications.articleDeletedNotification(commande).email,
             templates.notifications.commandeDeletedNotification(commande).subject,
             templates.notifications.commandeDeletedNotification(commande).text,
         );
@@ -149,6 +147,7 @@ export const editCommande = async (req, res) => {
 
         await commande.save();
         await sendAdminNotification(
+            templates.notifications.articleupdated(article).email,
             templates.notifications.articleupdated(article).subject,
             templates.notifications.articleupdated(article).text,
         );

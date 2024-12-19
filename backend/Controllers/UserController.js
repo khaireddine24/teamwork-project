@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
     }
 });
-const sendAdminNotification = async (subject, message) => {
+const sendAdminNotification = async (email,subject, message) => {
     try {
         const transporter = nodemailer.createTransport({
             host: "smtp-relay.brevo.com",
@@ -30,7 +30,7 @@ const sendAdminNotification = async (subject, message) => {
         });
 
         const mailOptions = {
-            from: 'ihrissanek@gmail.com',
+            from: email || 'ihrissanek@gmail.com',
             to: 'admin@email.com',    
             subject: subject,
             text: message
@@ -270,7 +270,7 @@ export const editUser = async (req, res) => {
         await user.save();
 
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: user.email,
             to: user.email,
             subject: templates.emails.ProfileUpdated(user).subject,
             text:  templates.emails.ProfileUpdated(user).text
@@ -318,7 +318,7 @@ export const deleteUser = async (req, res) => {
         }
 
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: user.email,
             to: user.email,
             subject: 'Account Deleted',
             text: `Hello ${user.name}, your account has been deleted successfully.`
@@ -347,8 +347,6 @@ export const deleteUser = async (req, res) => {
 // Verify email with verification code
 export const verifyEmail = async (req, res) => {
     const { email,verificationCode } = req.body;
-    console.log("email",email);
-    console.log("verifCode",verificationCode);
 
     try {
         const user = await User.findOne({ email });
@@ -357,7 +355,7 @@ export const verifyEmail = async (req, res) => {
 
         user.verified = true;
         await user.save();
-        sendAdminNotification(templates.notifications.adminNotification(user).subject,templates.notifications.adminNotification(user).text);
+        sendAdminNotification(templates.notifications.adminNotification(user).email,templates.notifications.adminNotification(user).subject,templates.notifications.adminNotification(user).text);
         res.status(200).json({ message: 'Email verified successfully!' });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -404,8 +402,8 @@ export const requestPasswordReset = async (req, res) => {
         await user.save();
         const resetLink = `https://teamwork-project.vercel.app/reset-password/${token}`;
         const mailOptions = {
-            to: user.email,
-            from: 'ihrissanek@gmail.com',
+            to:  user.email || 'ihrissanek@gmail.com',
+            from: email,
             subject: 'Password Reset Request',
             text: `Click on the following link to reset your password:\n\n${resetLink}\n\nIf you did not request this, please ignore this email.\n`
         };
@@ -456,10 +454,10 @@ export const acceptAccess = async (req, res) => {
         user.isAccessGranted = true;
         await user.save();
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from:  user.email || 'ihrissanek@gmail.com',
             to: user.email,
-            subject:templates.emails.welcomeEmail(user,accessLink).subject,
-            text:templates.emails.welcomeEmail(user,accessLink).text
+            subject:templates.emails.WelcomeEmail(user,accessLink).subject,
+            text:templates.emails.WelcomeEmail(user,accessLink).text
         });
         res.status(200).json({ message: 'Access granted and email sent.' });
     } catch (error) {
@@ -480,7 +478,7 @@ export const denyAccess = async (req, res) => {
 
         // Send the email notification
         await transporter.sendMail({
-            from: 'ihrissanek@gmail.com',
+            from: user.email || 'ihrissanek@gmail.com',
             to: user.email,
             subject: 'Access Denied',
             text: `Hello ${user.name}, your access request has been denied.`
