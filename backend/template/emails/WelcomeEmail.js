@@ -1,4 +1,4 @@
-export const welcomeEmail = (user,accessLink) => {
+export const WelcomeEmail = (user,accessLink) => {
     return {
         subject: 'Access is Guranted',
         text: `

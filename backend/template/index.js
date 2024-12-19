@@ -1,4 +1,4 @@
-import { welcomeEmail } from './emails/welcomeEmail.js';
+import {WelcomeEmail} from './emails/WelcomeEmail.js'
 import { verificationCode } from './emails/verificationCode.js';
 import { articleAddedNotification } from './notifications/articleAddedNotification.js';
 import { articleDeletedNotification } from './notifications/articleDeletedNotification.js';
@@ -11,7 +11,7 @@ import { commandeupdated } from './notifications/commandeupdated.js';
 
 export const templates = {
     emails: {
-        welcomeEmail,
+        WelcomeEmail,
         verificationCode,
         ProfileUpdated
     },
