@@ -1,6 +1,4 @@
 import mongoose from "mongoose"; 
-import { Supplier } from "./Supplier.js";
-import { ItemLine } from "./ItemLine.js";
 
 const CommandeSchema = new mongoose.Schema({
     dateCommande: {

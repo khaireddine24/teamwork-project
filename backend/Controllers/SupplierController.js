@@ -1,6 +1,4 @@
 import { Supplier } from '../models/Supplier.js';
-import nodemailer from 'nodemailer';
-import { templates } from '../template/index.js';
 // Create a new supplier
 const createSupplier = async (req, res) => {
     const { name, address, email, phone, niche } = req.body; // Added niche here

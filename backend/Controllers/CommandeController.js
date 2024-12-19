@@ -10,13 +10,13 @@ const sendAdminNotification = async (subject, message) => {
             host: 'smtp.mailtrap.io',
             port: 2525,
             auth: {
-                user: '98d772f0f26841',
-                pass: '56a1b9eaddd4fb'
+                user: '31cb6d900a353e',
+                pass: '4ef74662ceadd1'
             }
         });
 
         const mailOptions = {
-            from: 'thamerkthir@gmail.com',
+            from: 'ihrissanek@gmail.com',
             to: 'admin@email.com',    
             subject: subject,
             text: typeof message === 'string' ? message : JSON.stringify(message),

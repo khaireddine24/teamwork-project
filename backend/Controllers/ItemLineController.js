@@ -1,6 +1,4 @@
 import { ItemLine } from '../models/ItemLine.js'; // Import the ItemLine model
-import nodemailer from 'nodemailer'; // If you need to send email notifications (optional)
-import { templates } from '../template/index.js'; // If you have templates for email notifications (optional)
 
 // Create a new item line
 export const createItemLine = async (req, res) => {
