@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const db = mongoose.connection;
+
 
 export const dbConnect = async () => {
     db.on("error", (error) => console.error("MongoDB connection error:", error));
