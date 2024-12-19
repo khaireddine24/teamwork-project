@@ -19,6 +19,7 @@ import OrdersPageAdmin from "./pages/OrderPageAdmin";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const { user,checkAuthStatus } = useAuthStore();
@@ -111,10 +112,11 @@ function App() {
           <Route path="/orders/admin" element={<OrdersPageAdmin />} />
           <Route path="/orders/user" element={<OrdersPage />} />
           <Route path="/suppliers" element={<SuppliersPage />} />
+          <Route path="/not-found" element={<NotFound/>} />
         </Route>
 
         {/* Catch all */}
-        <Route path="*" element={<Navigate to="/admin-dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/not-found" replace />} />
       </Routes>
       <Toaster />
     </div>
