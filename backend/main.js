@@ -24,18 +24,8 @@ dbConnect();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  session({
-    secret: 'secret123',
-    saveUninitialized: true,
-    resave: false,
-  })
-);
-app.use((req, res, next) => {
-  res.locals.message = req.session.message;
-  delete req.session.message;
-  next();
-});
+
+
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Serve static files from uploads directory
