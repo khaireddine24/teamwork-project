@@ -50,7 +50,7 @@ export const addArticle = async (articleData, token) => {
 // Function to edit an article
 export const editArticle = async (id, articleData, token) => {
   try {
-    const response = await axios.put(`${API_URL}/edit/${id}`, articleData, {
+    const response = await axios.put(`${API_URL}/${id}`, articleData, {
       headers: {
         'Authorization': `Bearer ${token}`, // Add the token to the request headers
       },
@@ -65,7 +65,7 @@ export const editArticle = async (id, articleData, token) => {
 // Function to delete an article
 export const deleteArticle = async (id, token) => {
   try {
-    const response = await axios.delete(`${API_URL}/delete/${id}`, {
+    const response = await axios.delete(`${API_URL}/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`, // Add the token to the request headers
       },

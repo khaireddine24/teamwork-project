@@ -26,6 +26,7 @@ const LoginPage = () => {
       else{
         localStorage.setItem("auth_token", response.token);
         localStorage.setItem("auth_store", response.user.name);
+        localStorage.setItem("image", response.user.image);
         navigate ("/homeu");
       }
 			

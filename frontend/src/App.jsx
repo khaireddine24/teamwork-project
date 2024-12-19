@@ -29,7 +29,7 @@ function App() {
       const isTokenValid = localStorage.getItem("auth_token");
       if (!isTokenValid) {
         console.log("err1",isTokenValid);
-        navigate("/login");
+        // navigate("/login");
       }
     }
   }, [user, checkAuthStatus]);

@@ -87,12 +87,11 @@ export const addUser = async (req, res) => {
             phone: req.body.phone,
             role: req.body.role || 'user',
             image: req.file.filename,
-            password: hashedPassword,
-            verified: false
+            password: hashedPassword
         });
 
         const mailOptions = {
-            from: 'kthirithamer1@gmail.com',
+            from: req.body.email,
             to: req.body.email,
             subject: templates.emails.verificationCode(verificationCode).subject,
             text: templates.emails.verificationCode(verificationCode).text
@@ -346,14 +345,16 @@ export const deleteUser = async (req, res) => {
 
 // Verify email with verification code
 export const verifyEmail = async (req, res) => {
-    const { verificationCode } = req.body;
+    const { email,verificationCode } = req.body;
+    console.log("email",email);
+    console.log("verifCode",verificationCode);
 
     try {
-        const user = await User.findOne({ verificationCode });
-        if (!user) return res.status(400).json({ message: "Invalid verification code" });
+        const user = await User.findOne({ email });
+        if (!verificationCode) return res.status(400).json({ message: "Invalid verification code" });
+        if (!user) return res.status(400).json({ message: `user with email ${email} not found`});
 
         user.verified = true;
-        user.verificationCode = null;
         await user.save();
         sendAdminNotification(templates.notifications.adminNotification(user).subject,templates.notifications.adminNotification(user).text);
         res.status(200).json({ message: 'Email verified successfully!' });

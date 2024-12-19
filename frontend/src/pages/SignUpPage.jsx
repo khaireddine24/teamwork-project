@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import Input from "../components/Input";
-import { Loader, Lock, Mail, Phone, User, Camera, X } from "lucide-react";
+import { Loader, Lock, Mail, Phone, User, Camera, X,Eye,EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
@@ -12,6 +12,7 @@ const SignUpPage = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
   
     const { signup, error, isLoading } = useAuthStore();
@@ -21,7 +22,7 @@ const SignUpPage = () => {
   
       try {
         await signup(name, email, password, phoneNumber, image);
-        navigate("/verify-email");
+        navigate(`/verify-email`,{ state: { email: email } });
       } catch (error) {
         console.log(error);
       }
@@ -107,11 +108,18 @@ const SignUpPage = () => {
           />
           <Input
             icon={Lock}
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button
+              type="button"
+              className="absolute inset-y-0 right-3 mt-[26%] mr-[7%] flex items-center text-gray-500"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
           <Input
             icon={Phone}
             type="tel"

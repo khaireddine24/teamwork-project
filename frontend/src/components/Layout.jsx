@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Layout = ({ children }) => {
   const { logout } = useAuthStore();
   const user=localStorage.getItem("auth_store");
+  const imageUser=localStorage.getItem("image");
   console.log(user.message,user);
   const navigate = useNavigate();
 
@@ -46,7 +47,7 @@ const Layout = ({ children }) => {
                 />
               ) : (
                 <img
-                  src={`http://localhost:5000/uploads/${user?.image}`}
+                  src={`http://localhost:5000/uploads/${imageUser}`}
                   alt="Profile User"
                   className="w-8 h-8 rounded-full"
                 />
@@ -59,7 +60,7 @@ const Layout = ({ children }) => {
             {dropdownOpen && (
               <div className="absolute right-0 bg-white border shadow-lg mt-2 rounded p-2 w-48">
                 <Link
-                  to={"/settings"}
+                  to={"/SettingsUser"}
                   className="block text-gray-700 hover:bg-gray-100 p-2 rounded"
                 >
                   Settings

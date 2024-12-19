@@ -30,7 +30,7 @@ const EmployeesPage = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [pendingUsers]);
 
   const handleApprove = async (id) => {
     try {

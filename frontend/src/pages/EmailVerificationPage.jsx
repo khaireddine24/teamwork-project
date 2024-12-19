@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 import toast from "react-hot-toast";
@@ -8,6 +8,8 @@ const EmailVerificationPage = () => {
 	const [code, setCode] = useState(["", "", "", "", "", ""]);
 	const inputRefs = useRef([]);
 	const navigate = useNavigate();
+	const location=useLocation();
+	const EmailUser=location?.state?.email;
 
 	const { error, isLoading, verifyEmail } = useAuthStore();
 
@@ -43,8 +45,9 @@ const EmailVerificationPage = () => {
 		e.preventDefault();
 		const verificationCode = code.join("");
 		try {
-			await verifyEmail(verificationCode);
-			navigate("/");
+			console.log("verifInFront",verificationCode);
+			await verifyEmail(EmailUser,verificationCode);
+			navigate("/login");
 			toast.success("Email verified successfully");
 		} catch (error) {
 			console.log(error);
