@@ -401,7 +401,7 @@ export const requestPasswordReset = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000;
 
         await user.save();
-        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        const resetLink = `https://teamwork-project.vercel.app/reset-password/${token}`;
         const mailOptions = {
             to: user.email,
             from: 'ihrissanek@gmail.com',
@@ -451,7 +451,7 @@ export const acceptAccess = async (req, res) => {
         }
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
-        const accessLink = `http://localhost:5173/login`;
+        const accessLink = `https://teamwork-project.vercel.app/login`;
         user.isAccessGranted = true;
         await user.save();
         await transporter.sendMail({

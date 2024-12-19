@@ -25,13 +25,17 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://teamwork-project.vercel.app", credentials: true }));
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes prefix
 app.use("", routes);
+
+app.use("/",(req,res)=>{
+  res.status(404).json({message: "Route not found"})
+})
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
