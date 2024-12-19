@@ -21,11 +21,11 @@ const storage = multer.diskStorage({
 const sendAdminNotification = async (subject, message) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.mailtrap.io',
+            host: "smtp-relay.brevo.com",
             port: 2525,
             auth: {
-                user: '31cb6d900a353e',
-                pass: '4ef74662ceadd1'
+                user: "823395001@smtp-brevo.com",
+                pass: "wF8QJDEKOUpAnHLI"
             }
         });
 
@@ -47,12 +47,13 @@ const sendAdminNotification = async (subject, message) => {
 
 // Nodemailer setup (using Mailtrap)
 const transporter = nodemailer.createTransport({
-    host: 'smtp.mailtrap.io',
-    port: 2525,
-    auth: {
-        user: '31cb6d900a353e',
-        pass: '4ef74662ceadd1'
-    }
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: "823395001@smtp-brevo.com",
+    pass: "wF8QJDEKOUpAnHLI"
+  }
 });
 
 // Function to initialize admin user if not already exists

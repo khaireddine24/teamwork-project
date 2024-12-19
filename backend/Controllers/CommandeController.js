@@ -7,12 +7,13 @@ import { Commande } from '../models/Commande.js';
 const sendAdminNotification = async (subject, message) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.mailtrap.io',
-            port: 2525,
+            host: "smtp-relay.brevo.com",
+            port: 587,
+            secure: false,
             auth: {
-                user: '31cb6d900a353e',
-                pass: '4ef74662ceadd1'
-            }
+                user: "823395001@smtp-brevo.com",
+                pass: "wF8QJDEKOUpAnHLI"
+             }
         });
 
         const mailOptions = {
