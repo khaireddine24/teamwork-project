@@ -14,7 +14,7 @@ const EmployeesPage = () => {
     const fetchUsers = async () => {
       try {
         // Fetch all users who are not admins
-        const response = await axios.get("http://localhost:5000/users");
+        const response = await axios.get("https://teamwork-project.onrender.com/users");
         const allUsers = response.data.users;
 
         // Separate pending users and approved users
@@ -35,7 +35,7 @@ const EmployeesPage = () => {
   const handleApprove = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/accept-access/${id}`,
+        `https://teamwork-project.onrender.com/accept-access/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` }, // Properly pass the token
@@ -52,7 +52,7 @@ const EmployeesPage = () => {
   const handleDeny = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/deny-access/${id}`,
+        `https://teamwork-project.onrender.com/deny-access/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` }, // Properly pass the token

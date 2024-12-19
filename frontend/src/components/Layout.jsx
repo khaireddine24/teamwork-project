@@ -47,7 +47,7 @@ const Layout = ({ children }) => {
                 />
               ) : (
                 <img
-                  src={`http://localhost:5000/uploads/${imageUser}`}
+                  src={`https://teamwork-project.onrender.com/uploads/${imageUser}`}
                   alt="Profile User"
                   className="w-8 h-8 rounded-full"
                 />

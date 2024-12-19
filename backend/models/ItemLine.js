@@ -1,7 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
-import { Article } from "./Article.js";
-import { text } from "stream/consumers";
 
 const articleSchema = new mongoose.Schema({
     Articles: {
@@ -31,10 +28,6 @@ const articleSchema = new mongoose.Schema({
         type:String,
         default:"kg"
     }
-    
-    
-    
-
     
 });
 

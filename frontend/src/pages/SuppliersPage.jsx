@@ -15,7 +15,7 @@ const SuppliersPage = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/supplier",{
+      const response = await axios.get("https://teamwork-project.onrender.com/supplier",{
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       setSuppliers(response.data);
@@ -33,7 +33,7 @@ const SuppliersPage = () => {
   const handleAddSupplier = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/supplier/add",
+        "https://teamwork-project.onrender.com/supplier/add",
         form, // Ensure form is correctly structured
         {
           headers: {
@@ -57,7 +57,7 @@ const SuppliersPage = () => {
   const handleUpdateSupplier = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/supplier/${editingSupplier._id}`,
+        `https://teamwork-project.onrender.com/supplier/${editingSupplier._id}`,
         form,
         {
           headers: {
@@ -76,7 +76,7 @@ const SuppliersPage = () => {
 
   const handleDeleteSupplier = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/supplier/${id}`, {
+      await axios.delete(`https://teamwork-project.onrender.com/supplier/${id}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },

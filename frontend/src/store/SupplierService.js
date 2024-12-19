@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/supplier'; 
+const API_URL = 'https://teamwork-project.onrender.com/supplier'; 
 
 // Create Supplier with JWT Token as parameter
 const createSupplier = async (supplierData, token) => {

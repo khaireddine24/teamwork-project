@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/articles'; 
+const API_URL = 'https://teamwork-project.onrender.com/articles'; 
 
 // Function to get all articles
 export const getAllArticles = async (token) => {

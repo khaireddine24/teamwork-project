@@ -1,7 +1,7 @@
 // src/services/commandeService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/commandes'; // Update with your backend URL
+const API_URL = 'https://teamwork-project.onrender.com/commandes'; // Update with your backend URL
 
 // Service to fetch all commandes
 export const fetchCommandes = async (token) => {

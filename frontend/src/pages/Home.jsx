@@ -25,13 +25,13 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const [pendingRes, suppliersRes, employeesRes] = await Promise.all([
-          axios.get("http://localhost:5000/users", {
+          axios.get("https://teamwork-project.onrender.com/users", {
             headers: { Authorization: `Bearer ${user?.token}` },
           }),
-          axios.get("http://localhost:5000/supplier", {
+          axios.get("https://teamwork-project.onrender.com/supplier", {
             headers: { Authorization: `Bearer ${user?.token}` },
           }),
-          axios.get("http://localhost:5000/users", {
+          axios.get("https://teamwork-project.onrender.com/users", {
             headers: { Authorization: `Bearer ${user?.token}` },
           }),
         ]);
